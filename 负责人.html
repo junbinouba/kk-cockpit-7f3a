@@ -1,0 +1,51 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>负责人视图</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#232a33;--text:#e6edf3;--muted:#8b949e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 20px 60px}
+h1{font-size:23px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13px}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 6px}
+.nav a{color:var(--muted);text-decoration:none;padding:5px 11px;border:1px solid var(--line);border-radius:999px;font-size:13px}
+.nav a.on{color:#fff;border-color:#f0883e;background:#2a1a0e}
+.caliber{margin:12px 0;padding:10px 13px;border:1px solid #2d4a6b;background:#132033;border-radius:10px;color:#bcd3ee;font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card .k{color:var(--muted);font-size:12px}
+.card .v{font-size:22px;font-weight:700;margin:2px 0 1px}
+.card .v span{font-size:12px;font-weight:400;color:var(--muted)}
+.card .s{color:var(--muted);font-size:12px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin:14px 0}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:12px;color:var(--muted)}
+select{background:#0b0f14;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-width:150px;font-size:13px}
+button{background:#2a1a0e;color:#f0883e;border:1px solid #f0883e;border-radius:8px;padding:7px 14px;font-size:13px;cursor:pointer}
+h2{font-size:16px;margin:22px 0 8px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:6px 8px;border-bottom:1px solid #232a33;text-align:left;white-space:nowrap}
+th{color:var(--muted);font-weight:500}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.note{color:var(--muted);font-size:12px;margin-top:8px}
+.bar{display:grid;grid-template-columns:110px 1fr 90px;gap:8px;align-items:center;padding:4px 0}
+.bar .bl{font-size:13px;color:#c9d1d9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .track{background:#0b0f14;border-radius:5px;height:16px;overflow:hidden}
+.bar .fill{height:100%;background:#3b82f6;border-radius:5px}
+.bar .bv{text-align:right;font-size:12px;font-variant-numeric:tabular-nums;color:#c9d1d9}
+.tablewrap{max-height:560px;overflow:auto}
+footer{margin-top:28px;color:#6e7681;font-size:12px;border-top:1px solid #232a33;padding-top:10px}
+#tip{position:fixed;display:none;z-index:99;background:#0b0f14;color:#e6edf3;border:1px solid #f0883e;border-radius:6px;padding:5px 9px;font-size:12px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style></head><body><div class="wrap">
+<h1>负责人视图</h1><div class="sub">按负责人看区域大盘、代表排行和区县明细</div>
+<nav class="nav"><a href="index.html">老板总览</a><a href="科兴.html">科兴</a><a href="康希诺.html">康希诺</a><a href="成人及犬伤.html">成人及犬伤</a><a href="负责人.html" class="on">负责人视图</a></nav>
+<div class="kpis" style="grid-template-columns:repeat(3,1fr)"><a class="card" style="display:block;text-decoration:none;color:inherit" href="负责人-李兵兵.html">
+      <div class="k">李兵兵</div><div class="v" style="font-size:20px">17 人 · 8 市</div>
+      <div class="s">十堰、咸宁、宜昌、恩施、武汉、潜江、襄阳、鄂州</div></a><a class="card" style="display:block;text-decoration:none;color:inherit" href="负责人-张敏.html">
+      <div class="k">张敏</div><div class="v" style="font-size:20px">11 人 · 8 市</div>
+      <div class="s">十堰、孝感、武汉、神农架、荆州、襄阳、随州、黄石</div></a><a class="card" style="display:block;text-decoration:none;color:inherit" href="负责人-吴艳.html">
+      <div class="k">吴艳</div><div class="v" style="font-size:20px">5 人 · 6 市</div>
+      <div class="s">仙桃、天门、宜昌、荆州、荆门、随州</div></a></div>
+</div></body></html>

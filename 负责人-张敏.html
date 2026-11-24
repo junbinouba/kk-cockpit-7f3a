@@ -1,0 +1,149 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><title>张敏 · 区域驾驶舱</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#232a33;--text:#e6edf3;--muted:#8b949e}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 20px 60px}
+h1{font-size:23px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13px}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 6px}
+.nav a{color:var(--muted);text-decoration:none;padding:5px 11px;border:1px solid var(--line);border-radius:999px;font-size:13px}
+.nav a.on{color:#fff;border-color:#f0883e;background:#2a1a0e}
+.caliber{margin:12px 0;padding:10px 13px;border:1px solid #2d4a6b;background:#132033;border-radius:10px;color:#bcd3ee;font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card .k{color:var(--muted);font-size:12px}
+.card .v{font-size:22px;font-weight:700;margin:2px 0 1px}
+.card .v span{font-size:12px;font-weight:400;color:var(--muted)}
+.card .s{color:var(--muted);font-size:12px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin:14px 0}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:12px;color:var(--muted)}
+select{background:#0b0f14;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-width:150px;font-size:13px}
+button{background:#2a1a0e;color:#f0883e;border:1px solid #f0883e;border-radius:8px;padding:7px 14px;font-size:13px;cursor:pointer}
+h2{font-size:16px;margin:22px 0 8px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:6px 8px;border-bottom:1px solid #232a33;text-align:left;white-space:nowrap}
+th{color:var(--muted);font-weight:500}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.note{color:var(--muted);font-size:12px;margin-top:8px}
+.bar{display:grid;grid-template-columns:110px 1fr 90px;gap:8px;align-items:center;padding:4px 0}
+.bar .bl{font-size:13px;color:#c9d1d9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .track{background:#0b0f14;border-radius:5px;height:16px;overflow:hidden}
+.bar .fill{height:100%;background:#3b82f6;border-radius:5px}
+.bar .bv{text-align:right;font-size:12px;font-variant-numeric:tabular-nums;color:#c9d1d9}
+.tablewrap{max-height:560px;overflow:auto}
+footer{margin-top:28px;color:#6e7681;font-size:12px;border-top:1px solid #232a33;padding-top:10px}
+#tip{position:fixed;display:none;z-index:99;background:#0b0f14;color:#e6edf3;border:1px solid #f0883e;border-radius:6px;padding:5px 9px;font-size:12px;pointer-events:none;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
+</style></head><body><div class="wrap">
+<h1>张敏 · 区域驾驶舱</h1><div class="sub">负责区域：十堰、孝感、武汉、神农架、荆州、襄阳、随州、黄石 · 团队 11 人 · 全省 164,019 / 912,271 支（18.0%）</div>
+<nav class="nav"><a href="index.html">老板总览</a><a href="科兴.html">科兴</a><a href="康希诺.html">康希诺</a><a href="成人及犬伤.html">成人及犬伤</a><a href="负责人.html" class="on">负责人视图</a></nav>
+<div class="caliber"><b>口径：</b>接种为 2026 年 1–10 月，市场为同产品全部品牌；代表排行按科兴、康希诺全部产品 2026 年 1–11 月发货金额（发货数量 × 均价）。武汉、黄冈的流脑不在负责范围，不计入代表明细；武汉、黄冈的 13 价按口径记张晗旭。</div>
+<div id="kpis" class="kpis"></div>
+<div class="filters">
+  <div class="field"><label>产品</label><select id="f-p"></select></div>
+  <div class="field"><label>地市</label><select id="f-c"></select></div>
+  <div class="field"><label>代表</label><select id="f-r"></select></div>
+  <div class="field"><label>区县</label><select id="f-d"></select></div>
+  <button id="reset">重置</button>
+</div>
+<h2>代表排行（按发货金额：数量 × 单价）</h2>
+<div class="panel" id="bars"></div>
+<h2>明细（代表 × 区县 × 产品）</h2>
+<div class="panel"><div class="tablewrap"><table id="tbl">
+<thead><tr><th>代表</th><th>地市</th><th>区县</th><th>产品</th><th class="num">累计接种</th><th class="num">累计市场</th><th class="num">累计份额</th><th class="num">10月接种</th><th class="num">10月市场</th><th class="num">10月份额</th></tr></thead>
+<tbody></tbody></table></div><div class="note" id="cnt"></div></div>
+<script>
+const DATA = {"leader":"张敏","records":[{"r":"张晗旭","c":"武汉","d":"东西湖区","p":"13价","o":0,"m":5187,"lo":0,"lm":518},{"r":"叶茂","c":"武汉","d":"东西湖区","p":"EV71","o":261,"m":6665,"lo":30,"lm":527},{"r":"待招聘5","c":"武汉","d":"东西湖区","p":"水痘","o":15,"m":7642,"lo":0,"lm":686},{"r":"张晗旭","c":"武汉","d":"新洲区","p":"13价","o":0,"m":1464,"lo":0,"lm":128},{"r":"周红梅","c":"武汉","d":"新洲区","p":"EV71","o":67,"m":1998,"lo":0,"lm":174},{"r":"周红梅","c":"武汉","d":"新洲区","p":"水痘","o":10,"m":2657,"lo":0,"lm":235},{"r":"张晗旭","c":"武汉","d":"武昌区","p":"13价","o":147,"m":4949,"lo":20,"lm":421},{"r":"宋燕","c":"武汉","d":"武昌区","p":"EV71","o":832,"m":4989,"lo":25,"lm":374},{"r":"宋燕","c":"武汉","d":"武昌区","p":"水痘","o":1003,"m":6612,"lo":3,"lm":593},{"r":"张晗旭","c":"武汉","d":"江岸区","p":"13价","o":17,"m":5808,"lo":2,"lm":539},{"r":"周红梅","c":"武汉","d":"江岸区","p":"EV71","o":1149,"m":5170,"lo":91,"lm":377},{"r":"周红梅","c":"武汉","d":"江岸区","p":"水痘","o":1200,"m":6749,"lo":22,"lm":539},{"r":"张晗旭","c":"武汉","d":"江汉区","p":"13价","o":4,"m":3030,"lo":2,"lm":296},{"r":"叶茂","c":"武汉","d":"江汉区","p":"EV71","o":112,"m":2675,"lo":12,"lm":208},{"r":"叶茂","c":"武汉","d":"江汉区","p":"水痘","o":81,"m":3504,"lo":16,"lm":289},{"r":"张晗旭","c":"武汉","d":"长江新区","p":"13价","o":10,"m":1797,"lo":0,"lm":165},{"r":"周红梅","c":"武汉","d":"长江新区","p":"EV71","o":532,"m":3076,"lo":45,"lm":265},{"r":"周红梅","c":"武汉","d":"长江新区","p":"水痘","o":0,"m":3576,"lo":0,"lm":288},{"r":"张晗旭","c":"武汉","d":"青山区","p":"13价","o":10,"m":2454,"lo":2,"lm":242},{"r":"周志超","c":"武汉","d":"青山区","p":"EV71","o":935,"m":2678,"lo":44,"lm":211},{"r":"周志超","c":"武汉","d":"青山区","p":"水痘","o":52,"m":3360,"lo":0,"lm":322},{"r":"张晗旭","c":"武汉","d":"黄陂区","p":"13价","o":0,"m":4249,"lo":0,"lm":393},{"r":"张儒","c":"武汉","d":"黄陂区","p":"EV71","o":3326,"m":7152,"lo":216,"lm":519},{"r":"张儒","c":"武汉","d":"黄陂区","p":"水痘","o":3224,"m":7188,"lo":0,"lm":530},{"r":"吴树炎","c":"黄石","d":"下陆区","p":"13价","o":198,"m":1945,"lo":31,"lm":186},{"r":"吴树炎","c":"黄石","d":"下陆区","p":"流脑","o":924,"m":2764,"lo":105,"lm":237},{"r":"吴树炎","c":"黄石","d":"下陆区","p":"EV71","o":1489,"m":2141,"lo":152,"lm":216},{"r":"吴树炎","c":"黄石","d":"下陆区","p":"水痘","o":741,"m":2379,"lo":11,"lm":182},{"r":"吴树炎","c":"黄石","d":"大冶市","p":"13价","o":0,"m":1333,"lo":0,"lm":137},{"r":"吴树炎","c":"黄石","d":"大冶市","p":"流脑","o":203,"m":1156,"lo":17,"lm":71},{"r":"吴树炎","c":"黄石","d":"大冶市","p":"EV71","o":515,"m":3151,"lo":25,"lm":264},{"r":"吴树炎","c":"黄石","d":"大冶市","p":"水痘","o":0,"m":3380,"lo":0,"lm":231},{"r":"吴树炎","c":"黄石","d":"开发区（铁山区）","p":"13价","o":15,"m":209,"lo":2,"lm":21},{"r":"吴树炎","c":"黄石","d":"开发区（铁山区）","p":"流脑","o":7,"m":574,"lo":1,"lm":42},{"r":"吴树炎","c":"黄石","d":"开发区（铁山区）","p":"EV71","o":268,"m":638,"lo":18,"lm":51},{"r":"吴树炎","c":"黄石","d":"开发区（铁山区）","p":"水痘","o":444,"m":1011,"lo":28,"lm":106},{"r":"吴树炎","c":"黄石","d":"西塞山区","p":"13价","o":0,"m":647,"lo":0,"lm":48},{"r":"吴树炎","c":"黄石","d":"西塞山区","p":"流脑","o":243,"m":710,"lo":15,"lm":42},{"r":"吴树炎","c":"黄石","d":"西塞山区","p":"EV71","o":254,"m":814,"lo":15,"lm":76},{"r":"吴树炎","c":"黄石","d":"西塞山区","p":"水痘","o":359,"m":900,"lo":18,"lm":77},{"r":"吴树炎","c":"黄石","d":"阳新县","p":"13价","o":0,"m":3026,"lo":0,"lm":297},{"r":"吴树炎","c":"黄石","d":"阳新县","p":"流脑","o":433,"m":2446,"lo":43,"lm":239},{"r":"陈辉","c":"黄石","d":"阳新县","p":"EV71","o":1891,"m":4981,"lo":153,"lm":416},{"r":"陈辉","c":"黄石","d":"阳新县","p":"水痘","o":2150,"m":6391,"lo":105,"lm":574},{"r":"吴树炎","c":"黄石","d":"黄石港区","p":"13价","o":67,"m":647,"lo":10,"lm":63},{"r":"吴树炎","c":"黄石","d":"黄石港区","p":"流脑","o":236,"m":1283,"lo":26,"lm":139},{"r":"吴树炎","c":"黄石","d":"黄石港区","p":"EV71","o":374,"m":1041,"lo":34,"lm":90},{"r":"吴树炎","c":"黄石","d":"黄石港区","p":"水痘","o":321,"m":1751,"lo":17,"lm":188},{"r":"王晨光","c":"十堰","d":"十堰经济技术开发区","p":"13价","o":0,"m":114,"lo":0,"lm":4},{"r":"王晨光","c":"十堰","d":"十堰经济技术开发区","p":"流脑","o":0,"m":97,"lo":0,"lm":3},{"r":"王晨光","c":"十堰","d":"十堰经济技术开发区","p":"EV71","o":141,"m":522,"lo":17,"lm":37},{"r":"王晨光","c":"十堰","d":"十堰经济技术开发区","p":"水痘","o":1,"m":899,"lo":0,"lm":98},{"r":"王晨光","c":"十堰","d":"张湾区","p":"13价","o":0,"m":931,"lo":0,"lm":69},{"r":"王晨光","c":"十堰","d":"张湾区","p":"流脑","o":175,"m":1002,"lo":13,"lm":59},{"r":"王晨光","c":"十堰","d":"张湾区","p":"EV71","o":711,"m":1994,"lo":49,"lm":119},{"r":"王晨光","c":"十堰","d":"张湾区","p":"水痘","o":626,"m":3053,"lo":90,"lm":316},{"r":"王晨光","c":"十堰","d":"房县","p":"13价","o":0,"m":569,"lo":0,"lm":53},{"r":"王晨光","c":"十堰","d":"房县","p":"流脑","o":0,"m":81,"lo":0,"lm":0},{"r":"王晨光","c":"十堰","d":"房县","p":"EV71","o":0,"m":1196,"lo":0,"lm":86},{"r":"王晨光","c":"十堰","d":"房县","p":"水痘","o":0,"m":1563,"lo":0,"lm":174},{"r":"王晨光","c":"十堰","d":"武当山旅游经济特区","p":"13价","o":0,"m":58,"lo":0,"lm":5},{"r":"王晨光","c":"十堰","d":"武当山旅游经济特区","p":"EV71","o":0,"m":238,"lo":0,"lm":12},{"r":"王晨光","c":"十堰","d":"武当山旅游经济特区","p":"水痘","o":0,"m":628,"lo":0,"lm":39},{"r":"王晨光","c":"十堰","d":"竹山县","p":"13价","o":0,"m":715,"lo":0,"lm":80},{"r":"王晨光","c":"十堰","d":"竹山县","p":"流脑","o":0,"m":220,"lo":0,"lm":19},{"r":"王晨光","c":"十堰","d":"竹山县","p":"EV71","o":407,"m":1241,"lo":38,"lm":103},{"r":"王晨光","c":"十堰","d":"竹山县","p":"水痘","o":0,"m":1603,"lo":0,"lm":76},{"r":"王晨光","c":"十堰","d":"竹溪县","p":"13价","o":0,"m":159,"lo":0,"lm":14},{"r":"王晨光","c":"十堰","d":"竹溪县","p":"流脑","o":15,"m":237,"lo":1,"lm":6},{"r":"王晨光","c":"十堰","d":"竹溪县","p":"EV71","o":44,"m":666,"lo":4,"lm":65},{"r":"王晨光","c":"十堰","d":"竹溪县","p":"水痘","o":213,"m":585,"lo":0,"lm":43},{"r":"王晨光","c":"十堰","d":"茅箭区","p":"13价","o":23,"m":3635,"lo":7,"lm":342},{"r":"王晨光","c":"十堰","d":"茅箭区","p":"流脑","o":1004,"m":1822,"lo":95,"lm":182},{"r":"王晨光","c":"十堰","d":"茅箭区","p":"EV71","o":832,"m":4458,"lo":79,"lm":336},{"r":"王晨光","c":"十堰","d":"茅箭区","p":"水痘","o":0,"m":6662,"lo":0,"lm":1618},{"r":"王晨光","c":"十堰","d":"郧西县","p":"13价","o":0,"m":318,"lo":0,"lm":26},{"r":"王晨光","c":"十堰","d":"郧西县","p":"流脑","o":0,"m":455,"lo":0,"lm":19},{"r":"王晨光","c":"十堰","d":"郧西县","p":"EV71","o":509,"m":1509,"lo":44,"lm":81},{"r":"王晨光","c":"十堰","d":"郧西县","p":"水痘","o":225,"m":2632,"lo":34,"lm":165},{"r":"王晨光","c":"十堰","d":"郧阳区","p":"13价","o":0,"m":341,"lo":0,"lm":28},{"r":"王晨光","c":"十堰","d":"郧阳区","p":"流脑","o":0,"m":393,"lo":0,"lm":19},{"r":"王晨光","c":"十堰","d":"郧阳区","p":"EV71","o":319,"m":1119,"lo":17,"lm":71},{"r":"王晨光","c":"十堰","d":"郧阳区","p":"水痘","o":0,"m":1612,"lo":0,"lm":154},{"r":"冯颖辉","c":"襄阳","d":"枣阳市","p":"13价","o":28,"m":1328,"lo":8,"lm":138},{"r":"冯颖辉","c":"襄阳","d":"枣阳市","p":"流脑","o":739,"m":1290,"lo":66,"lm":98},{"r":"李兵兵","c":"襄阳","d":"枣阳市","p":"EV71","o":1438,"m":2532,"lo":140,"lm":222},{"r":"李兵兵","c":"襄阳","d":"枣阳市","p":"水痘","o":1291,"m":3030,"lo":144,"lm":220},{"r":"冯颖辉","c":"襄阳","d":"樊城区","p":"13价","o":102,"m":5501,"lo":15,"lm":526},{"r":"冯颖辉","c":"襄阳","d":"樊城区","p":"流脑","o":2234,"m":8288,"lo":212,"lm":546},{"r":"冯程程","c":"襄阳","d":"樊城区","p":"EV71","o":2561,"m":6511,"lo":172,"lm":510},{"r":"冯程程","c":"襄阳","d":"樊城区","p":"水痘","o":2701,"m":8838,"lo":155,"lm":720},{"r":"冯颖辉","c":"襄阳","d":"襄城区","p":"13价","o":1,"m":1573,"lo":1,"lm":132},{"r":"冯颖辉","c":"襄阳","d":"襄城区","p":"流脑","o":466,"m":2242,"lo":40,"lm":172},{"r":"冯程程","c":"襄阳","d":"襄城区","p":"EV71","o":644,"m":1809,"lo":47,"lm":127},{"r":"冯程程","c":"襄阳","d":"襄城区","p":"水痘","o":775,"m":2291,"lo":58,"lm":171},{"r":"冯程程","c":"襄阳","d":"襄州区","p":"13价","o":0,"m":2455,"lo":0,"lm":177},{"r":"冯颖辉","c":"襄阳","d":"襄州区","p":"流脑","o":1843,"m":3799,"lo":160,"lm":267},{"r":"李兵兵","c":"襄阳","d":"襄州区","p":"EV71","o":1835,"m":3846,"lo":116,"lm":240},{"r":"李兵兵","c":"襄阳","d":"襄州区","p":"水痘","o":643,"m":4598,"lo":68,"lm":329},{"r":"陈翔","c":"孝感","d":"云梦县","p":"13价","o":0,"m":586,"lo":0,"lm":19},{"r":"陈翔","c":"孝感","d":"云梦县","p":"流脑","o":78,"m":308,"lo":12,"lm":36},{"r":"陈翔","c":"孝感","d":"云梦县","p":"EV71","o":304,"m":1394,"lo":0,"lm":141},{"r":"陈翔","c":"孝感","d":"云梦县","p":"水痘","o":410,"m":1474,"lo":18,"lm":145},{"r":"陈翔","c":"孝感","d":"大悟县","p":"13价","o":0,"m":521,"lo":0,"lm":52},{"r":"陈翔","c":"孝感","d":"大悟县","p":"EV71","o":0,"m":1505,"lo":0,"lm":111},{"r":"陈翔","c":"孝感","d":"大悟县","p":"水痘","o":0,"m":1675,"lo":0,"lm":143},{"r":"陈翔","c":"孝感","d":"孝南区","p":"13价","o":125,"m":4236,"lo":26,"lm":379},{"r":"陈翔","c":"孝感","d":"孝南区","p":"流脑","o":816,"m":3651,"lo":94,"lm":299},{"r":"陈翔","c":"孝感","d":"孝南区","p":"EV71","o":945,"m":5259,"lo":77,"lm":435},{"r":"陈翔","c":"孝感","d":"孝南区","p":"水痘","o":0,"m":6523,"lo":0,"lm":573},{"r":"陈翔","c":"孝感","d":"孝昌县","p":"13价","o":0,"m":493,"lo":0,"lm":37},{"r":"陈翔","c":"孝感","d":"孝昌县","p":"流脑","o":0,"m":2038,"lo":0,"lm":126},{"r":"陈翔","c":"孝感","d":"孝昌县","p":"EV71","o":269,"m":1534,"lo":21,"lm":117},{"r":"陈翔","c":"孝感","d":"孝昌县","p":"水痘","o":0,"m":1937,"lo":0,"lm":108},{"r":"陈翔","c":"孝感","d":"安陆市","p":"13价","o":0,"m":1574,"lo":0,"lm":148},{"r":"陈翔","c":"孝感","d":"安陆市","p":"流脑","o":0,"m":693,"lo":0,"lm":47},{"r":"陈翔","c":"孝感","d":"安陆市","p":"EV71","o":539,"m":1926,"lo":2,"lm":131},{"r":"陈翔","c":"孝感","d":"安陆市","p":"水痘","o":0,"m":1956,"lo":0,"lm":173},{"r":"陈翔","c":"孝感","d":"应城市","p":"13价","o":0,"m":1284,"lo":0,"lm":97},{"r":"陈翔","c":"孝感","d":"应城市","p":"流脑","o":85,"m":1570,"lo":10,"lm":87},{"r":"陈翔","c":"孝感","d":"应城市","p":"EV71","o":286,"m":1616,"lo":25,"lm":126},{"r":"陈翔","c":"孝感","d":"应城市","p":"水痘","o":209,"m":2086,"lo":0,"lm":171},{"r":"陈翔","c":"孝感","d":"汉川市","p":"13价","o":0,"m":1548,"lo":0,"lm":142},{"r":"陈翔","c":"孝感","d":"汉川市","p":"流脑","o":167,"m":1081,"lo":16,"lm":64},{"r":"陈翔","c":"孝感","d":"汉川市","p":"EV71","o":437,"m":2677,"lo":49,"lm":225},{"r":"陈翔","c":"孝感","d":"汉川市","p":"水痘","o":978,"m":3038,"lo":184,"lm":269},{"r":"向宜","c":"荆州","d":"沙市区","p":"13价","o":0,"m":1777,"lo":0,"lm":159},{"r":"向宜","c":"荆州","d":"沙市区","p":"流脑","o":1159,"m":3677,"lo":82,"lm":234},{"r":"方向","c":"荆州","d":"沙市区","p":"EV71","o":1172,"m":2278,"lo":107,"lm":178},{"r":"方向","c":"荆州","d":"沙市区","p":"水痘","o":814,"m":3121,"lo":22,"lm":196},{"r":"向宜","c":"荆州","d":"荆州区","p":"13价","o":67,"m":3850,"lo":13,"lm":385},{"r":"向宜","c":"荆州","d":"荆州区","p":"流脑","o":2006,"m":5128,"lo":159,"lm":413},{"r":"方向","c":"荆州","d":"荆州区","p":"EV71","o":1507,"m":3635,"lo":124,"lm":298},{"r":"方向","c":"荆州","d":"荆州区","p":"水痘","o":1252,"m":3930,"lo":53,"lm":308},{"r":"周志超","c":"咸宁","d":"崇阳县","p":"EV71","o":904,"m":2032,"lo":61,"lm":152},{"r":"周志超","c":"咸宁","d":"崇阳县","p":"水痘","o":830,"m":2952,"lo":52,"lm":344},{"r":"向宜","c":"随州","d":"曾都区","p":"13价","o":0,"m":2014,"lo":0,"lm":178},{"r":"向宜","c":"随州","d":"曾都区","p":"流脑","o":644,"m":2607,"lo":68,"lm":222},{"r":"梅睿康","c":"随州","d":"曾都区","p":"EV71","o":2866,"m":3621,"lo":199,"lm":303},{"r":"梅睿康","c":"随州","d":"曾都区","p":"水痘","o":978,"m":4619,"lo":89,"lm":427},{"r":"张敏","c":"神农架","d":"神农架林区","p":"13价","o":0,"m":424,"lo":0,"lm":28},{"r":"张敏","c":"神农架","d":"神农架林区","p":"流脑","o":0,"m":137,"lo":0,"lm":0},{"r":"张敏","c":"神农架","d":"神农架林区","p":"EV71","o":204,"m":340,"lo":0,"lm":36},{"r":"张敏","c":"神农架","d":"神农架林区","p":"水痘","o":0,"m":501,"lo":0,"lm":38},{"r":"王晨光","c":"十堰","d":"武当山旅游经济特区","p":"流脑","o":0,"m":2,"lo":0,"lm":0}],"cities":["十堰","孝感","武汉","神农架","荆州","襄阳","随州","黄石"],"reps":["冯颖辉","叶茂","向宜","吴树炎","周志超","周红梅","宋燕","张儒","张敏","王晨光","陈翔"],"ship":{"王晨光":{"qty":1200.0,"amount":51.576},"周志超":{"qty":416.0,"amount":14.1394},"冯颖辉":{"qty":14428.0,"amount":307.19244},"宋燕":{"qty":-2120.0,"amount":-15.1372},"周红梅":{"qty":472.0,"amount":15.94215},"张儒":{"qty":5400.0,"amount":93.63},"向宜":{"qty":12985.0,"amount":274.04659000000004},"叶茂":{"qty":-1249.0,"amount":-10.5882},"陈翔":{"qty":2070.0,"amount":84.294},"吴树炎":{"qty":10363.0,"amount":245.8962}},"latest":10,"prov":{"o":164019,"m":912271}};
+const P = ['EV71','水痘','13价','流脑'];
+const sel = {p:'全部', c:'全部', r:'全部', d:'全部'};
+function opts(id, arr) {
+  const el = document.getElementById(id);
+  el.innerHTML = '<option>全部</option>' + arr.map(x => '<option>' + x + '</option>').join('');
+}
+function fillCounties() {
+  const cs = [...new Set(DATA.records.filter(x => sel.c === '全部' || x.c === sel.c).map(x => x.d))].sort();
+  opts('f-d', cs);
+}
+function filtered() {
+  return DATA.records.filter(x =>
+    (sel.p === '全部' || x.p === sel.p) &&
+    (sel.c === '全部' || x.c === sel.c) &&
+    (sel.r === '全部' || x.r === sel.r) &&
+    (sel.d === '全部' || x.d === sel.d));
+}
+function fmt(n) { return n.toLocaleString('zh-CN'); }
+function render() {
+  const rows = filtered();
+  const o = rows.reduce((s,x) => s + x.o, 0), m = rows.reduce((s,x) => s + x.m, 0);
+  const share = m ? (o / m * 100).toFixed(1) + '%' : '—';
+  const covers = new Set(rows.map(x => x.c + '|' + x.d)).size;
+  const reps = new Set(rows.map(x => x.r)).size;
+  const ship = DATA.ship || {};
+  const shipTotal = Object.values(ship).reduce((s,x) => s + x.amount, 0);
+  const latestO = rows.reduce((s,x) => s + x.lo, 0);
+  document.getElementById('kpis').innerHTML = [
+    ['区域接种量', fmt(o) + '<span> 支</span>', '2026 年 1–' + DATA.latest + ' 月'],
+    ['区域市场量', fmt(m) + '<span> 支</span>', '同产品全部品牌'],
+    ['区域份额', share, '我方 / 市场'],
+    ['发货金额', shipTotal.toFixed(2) + '<span> 万元</span>', '全部产品 发货×均价'],
+    [DATA.latest + '月接种', fmt(latestO) + '<span> 支</span>', '最新单月'],
+    ['覆盖区县', covers + ' 个', '当前筛选'],
+  ].map(([k,v,s]) => '<div class="card"><div class="k">' + k + '</div><div class="v">' + v + '</div><div class="s">' + s + '</div></div>').join('');
+  const arr = Object.entries(ship)
+    .filter(([r]) => sel.r === '全部' || r === sel.r)
+    .sort((a,b) => b[1].amount - a[1].amount).slice(0,10);
+  const mx = arr.length ? arr[0][1].amount : 1;
+  document.getElementById('bars').innerHTML = arr.map(([r,v]) =>
+    '<div class="bar" title="' + r + '：发货金额 ' + v.amount.toFixed(2) + ' 万元" data-tip="' + r + '：发货金额 ' + v.amount.toFixed(2) + ' 万元（共 ' + fmt(v.qty) + ' 支）"><div class="bl">' + r + '</div><div class="track"><div class="fill" style="width:' + Math.max(1, v.amount/mx*100) + '%"></div></div><div class="bv">' + v.amount.toFixed(2) + ' 万</div></div>').join('') || '当前筛选没有数据';
+  const tb = document.querySelector('#tbl tbody');
+  const sorted = rows.slice().sort((a,b) => b.o - a.o).slice(0, 400);
+  tb.innerHTML = sorted.map(x => '<tr data-tip="' + x.r + ' / ' + x.c + ' / ' + x.d + ' / ' + x.p + '：累计 ' + fmt(x.o) + ' 支，' + DATA.latest + '月 ' + fmt(x.lo) + ' 支"><td>' + x.r + '</td><td>' + x.c + '</td><td>' + x.d + '</td><td>' + x.p + '</td><td class="num">' + fmt(x.o) + '</td><td class="num">' + fmt(x.m) + '</td><td class="num">' + (x.m ? (x.o/x.m*100).toFixed(1) + '%' : '—') + '</td><td class="num">' + fmt(x.lo) + '</td><td class="num">' + fmt(x.lm) + '</td><td class="num">' + (x.lm ? (x.lo/x.lm*100).toFixed(1) + '%' : '—') + '</td></tr>').join('');
+  document.getElementById('cnt').textContent = '共 ' + rows.length + ' 行，按我方接种量降序显示前 400 行。';
+}
+function bind(id, key, after) {
+  document.getElementById(id).addEventListener('change', e => {
+    sel[key] = e.target.value;
+    if (after) after();
+    render();
+  });
+}
+opts('f-p', P); opts('f-c', DATA.cities); opts('f-r', DATA.reps); fillCounties();
+bind('f-p','p'); bind('f-c','c', fillCounties); bind('f-r','r'); bind('f-d','d');
+document.getElementById('reset').onclick = () => {
+  sel.p = '全部'; sel.c = '全部'; sel.r = '全部'; sel.d = '全部';
+  ['f-p','f-c','f-r','f-d'].forEach(id => document.getElementById(id).value = '全部');
+  fillCounties(); render();
+};
+render();
+</script>
+<div id="tip"></div>
+
+<script>
+(function () {
+  var tip = document.getElementById('tip');
+  document.addEventListener('mouseover', function (e) {
+    var el = e.target.closest ? e.target.closest('[data-tip]') : null;
+    if (!el) return;
+    tip.textContent = el.getAttribute('data-tip');
+    tip.style.display = 'block';
+  });
+  document.addEventListener('mousemove', function (e) {
+    if (tip.style.display !== 'block') return;
+    var x = e.clientX + 14, y = e.clientY + 14;
+    if (x + tip.offsetWidth > window.innerWidth - 8) x = e.clientX - tip.offsetWidth - 14;
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  });
+  document.addEventListener('mouseout', function (e) {
+    var el = e.target.closest ? e.target.closest('[data-tip]') : null;
+    if (el) tip.style.display = 'none';
+  });
+})();
+</script>
+
+<footer>来源：D:\张晗旭工作文件\纯销数据\25年\2025-2026重点产品接种分析报表.xlsx 与《2026发货进度_三板块_区县版.xlsx》。明细为接种量；代表排行按科兴、康希诺全部产品 1–11 月发货金额（数量×均价）。全省 164,019 / 912,271 支。</footer>
+</div></body></html>
